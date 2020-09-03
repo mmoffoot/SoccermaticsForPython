@@ -4,18 +4,21 @@ import json
 
 #Load the competition file
 #Got this by searching 'how do I open json in Python'
-with open('Statsbomb/data/competitions.json') as f:
+with open('../statsbomb-opendata/data/competitions.json') as f:
     competitions = json.load(f)
-    
-#Womens World Cup 2019 has competition ID 72
-competition_id=72
 
-#Womens World Cup 2019 has competition ID 72
-competition_id=72
+#Self select manually a competition ID from the data, such as 72 or 43
+competition_id=43
 
+#Extract the Season id so the related file can be found
+
+for competition in competitions:
+    if (competition_id == competition['competition_id']):
+#        print("The competition ID is " + str(competition['competition_id']))
+        season_id=competition['season_id']
 
 #Load the list of matches for this competition
-with open('Statsbomb/data/matches/'+str(competition_id)+'/30.json') as f:
+with open('../statsbomb-opendata/data/matches/'+str(competition_id)+'/'+str(season_id)+'.json') as f:
     matches = json.load(f)
 
 #Look inside matches
@@ -35,8 +38,9 @@ for match in matches:
     print(describe_text + result_text)
 
 #Now lets find a match we are interested in
-home_team_required ="England"
-away_team_required ="Sweden"
+home_team_required ="Sweden"
+away_team_required ="England"
+team_required ="Sweden"
 
 #Find ID for the match
 for match in matches:
@@ -44,10 +48,15 @@ for match in matches:
     away_team_name=match['away_team']['away_team_name']
     if (home_team_name==home_team_required) and (away_team_name==away_team_required):
         match_id_required = match['match_id']
-print(home_team_required + ' vs ' + away_team_required + ' has id:' + str(match_id_required))
-        
-#Exercise: 
-#1, Edit the code above to print out the result list for the Mens World cup 
+        print(home_team_required + ' vs ' + away_team_required + ' has id:' + str(match_id_required))
+    if (home_team_name==team_required) or (away_team_name==team_required):
+        home_score=match['home_score']
+        away_score=match['away_score']
+        describe_text = 'The Sweden match between ' + home_team_name + ' and ' + away_team_name
+        result_text = ' finished ' + str(home_score) +  ' : ' + str(away_score)
+        print(describe_text + result_text)
+
+#Exercise:
+#1, Edit the code above to print out the result list for the Mens World cup
 #2, Edit the code above to find the ID for England vs. Sweden
 #3, Write new code to write out a list of just Sweden's results in the tournament.
-

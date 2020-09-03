@@ -18,20 +18,20 @@ away_team_required ="Sweden Women's"
 # I took this from https://znstrider.github.io/2018-11-11-Getting-Started-with-StatsBomb-Data/
 file_name=str(match_id_required)+'.json'
 
-#Load in all match events 
+#Load in all match events
 import json
-with open('Statsbomb/data/events/'+file_name) as data_file:
+with open('../statsbomb-opendata/data/events/'+file_name) as data_file:
     #print (mypath+'events/'+file)
     data = json.load(data_file)
 
-#get the nested structure into a dataframe 
+#get the nested structure into a dataframe
 #store the dataframe in a dictionary with the match id as key (remove '.json' from string)
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 df = json_normalize(data, sep = "_").assign(match_id = file_name[:-5])
 
 #A dataframe of shots
 shots = df.loc[df['type_name'] == 'Shot'].set_index('id')
-    
+
 #Draw the pitch
 from FCPython import createPitch
 (fig,ax) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
@@ -40,40 +40,232 @@ from FCPython import createPitch
 for i,shot in shots.iterrows():
     x=shot['location'][0]
     y=shot['location'][1]
-    
+
     goal=shot['shot_outcome_name']=='Goal'
     team_name=shot['team_name']
-    
+
     circleSize=2
-    #circleSize=np.sqrt(shot['shot_statsbomb_xg']*15)
+    circleSize=np.sqrt(shot['shot_statsbomb_xg']*15)
 
     if (team_name==home_team_required):
         if goal:
             shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="red")
-            plt.text((x+1),pitchWidthY-y+1,shot['player_name']) 
+            plt.text((x+1),pitchWidthY-y+1,shot['player_name'])
         else:
-            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="red")     
+            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="red")
             shotCircle.set_alpha(.2)
     elif (team_name==away_team_required):
         if goal:
-            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="blue") 
-            plt.text((pitchLengthX-x+1),y+1,shot['player_name']) 
+            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="blue")
+            plt.text((pitchLengthX-x+1),y+1,shot['player_name'])
         else:
-            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="blue")      
+            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="blue")
             shotCircle.set_alpha(.2)
     ax.add_patch(shotCircle)
-    
-    
-plt.text(5,75,away_team_required + ' shots') 
-plt.text(80,75,home_team_required + ' shots') 
-     
+
+
+plt.text(5,75,away_team_required + ' shots')
+plt.text(80,75,home_team_required + ' shots')
+
 fig.set_size_inches(10, 7)
-fig.savefig('Output/shots.pdf', dpi=100) 
+fig.savefig('Output/shots.pdf', dpi=100)
 plt.show()
 
-#Exercise: 
+#Exercise:
 #1, Create a dataframe of passes which contains all the passes in the match
-#2, Plot the start point of every Sweden pass. Attacking left to right.
-#3, Plot only passes made by Caroline Seger (she is Sara Caroline Seger in the database)
-#4, Plot arrows to show where the passes we
 
+#A dataframe of passes
+passes = df.loc[df['type_name'] == 'Pass'].set_index('id')
+
+# Plot the starting point of the pass
+(anotherFig,by) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+
+for i,tpass in passes.iterrows():
+    x=tpass['location'][0]
+    y=tpass['location'][1]
+
+    team_name=tpass['team_name']
+
+    circleSize=1
+
+    if (team_name==home_team_required):
+            passCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="blue")
+            passCircle.set_alpha(.2)
+    elif (team_name==away_team_required):
+            passCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="yellow")
+            passCircle.set_alpha(.2)
+    by.add_patch(passCircle)
+
+
+plt.text(5,75,away_team_required + ' originating pass')
+plt.text(80,75,home_team_required + ' originating pass')
+
+anotherFig.set_size_inches(10, 7)
+anotherFig.savefig('Output/passes.pdf', dpi=100)
+plt.show()
+
+
+#2, Plot the start point of every Sweden pass. Attacking left to right.
+(SwePasses,cz) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+
+SwepassCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+
+for i,tswepass in passes.iterrows():
+    x=tswepass['location'][0]
+    y=tswepass['location'][1]
+
+    team_name=tswepass['team_name']
+
+    circleSize=1
+
+    if (team_name==away_team_required):
+            SwepassCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
+            SwepassCircle.set_alpha(.2)
+            #if (tswepass['player_name'] == 'Rut Hedvig Lindahl'):
+            #    plt.text((x+1),pitchWidthY-y+1,tswepass['player_name'])
+    cz.add_patch(SwepassCircle)
+
+
+plt.text(5,75,away_team_required + ' originating passes')
+
+SwePasses.set_size_inches(10, 7)
+SwePasses.savefig('Output/SWEpasses.pdf', dpi=100)
+plt.show()
+
+
+#3, Plot only passes made by Caroline Seger (she is Sara Caroline Seger in the database)
+(SwePassPlayer,dw) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+
+SwePassPlayerCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+
+for i,tswepassplayer in passes.iterrows():
+    x=tswepassplayer['location'][0]
+    y=tswepassplayer['location'][1]
+
+    team_name=tswepassplayer['team_name']
+
+    circleSize=1
+
+    if (team_name==away_team_required):
+        if (tswepassplayer['player_name'] == 'Sara Caroline Seger'):
+            playerpassing = tswepassplayer['player_name']
+            SwePassPlayerCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
+            SwePassPlayerCircle.set_alpha(.2)
+    dw.add_patch(SwePassPlayerCircle)
+
+
+plt.text(5,75,away_team_required + ' ' + playerpassing + ' originating passes')
+
+SwePassPlayer.set_size_inches(10, 7)
+SwePassPlayer.savefig('Output/SWEpassesSCS.pdf', dpi=100)
+plt.show()
+
+
+
+#4, Plot arrows to show where the passes went
+(SwePassPlayerDir,eu) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+
+SwePassPlayerDirCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+
+for i,tswepassplayerdir in passes.iterrows():
+    #Just checking the Keys of the list
+    #print (', '.join(map(str, tswepassplayerdir.items())))
+
+    #Originally had the pass locations stored here.
+    x_start=tswepassplayerdir['location'][0]
+    y_start=tswepassplayerdir['location'][1]
+    x_end=tswepassplayerdir['pass_end_location'][0]
+    y_end=tswepassplayerdir['pass_end_location'][1]
+
+    team_name=tswepassplayerdir['team_name']
+
+    circleSize=1
+
+    playerpassingdir = tswepassplayerdir['player_name']
+
+    if (team_name==away_team_required):
+        if (playerpassingdir == 'Sara Caroline Seger'):
+            playernowpassing=playerpassingdir
+
+            SwePassPlayerDirCircle=plt.Circle((x_start,pitchWidthY-y_start),circleSize,color="yellow")
+            SwePassPlayerDirCircle.set_alpha(.2)
+            eu.add_patch(SwePassPlayerDirCircle)
+
+            #David's code
+            dx=x_end-x_start
+            dy=y_end-y_start
+            passLineDirection=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
+            eu.add_patch(passLineDirection)
+
+            #My version
+            #x_values=[x_start, x_end]
+            #y_values=[pitchWidthY-y_start, pitchWidthY-y_end]
+            #passLineDirection=plt.plot(x_values, y_values)
+            #eu.annotate('', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, pitchWidthY-y_end),
+            #    arrowprops={'arrowstyle': '<-'}, va='center')
+
+
+plt.text(5,75,away_team_required + ' ' + playernowpassing + ' originating passes')
+
+SwePassPlayerDir.set_size_inches(10, 7)
+SwePassPlayerDir.savefig('Output/SWEpassesdirectionSCS.pdf', dpi=100)
+plt.show()
+
+
+#5, Plot arrows of a player in a specific minute to show where the passes went
+# and correlate to Youtube footage of the match
+
+(SwePassPlayerDirCor,ft) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+
+SwePassPlayerDirCorCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+
+for i,tswepassplayerdircor in passes.iterrows():
+    #Just checking the Keys of the list
+    #print (', '.join(map(str, tswepassplayerdir.items())))
+
+    #Originally had the pass locations stored here.
+    x_start=tswepassplayerdircor['location'][0]
+    y_start=tswepassplayerdircor['location'][1]
+    x_end=tswepassplayerdircor['pass_end_location'][0]
+    y_end=tswepassplayerdircor['pass_end_location'][1]
+
+    team_name=tswepassplayerdircor['team_name']
+
+    circleSize=1
+
+    playerpassingdircor = tswepassplayerdircor['player_name']
+
+    if (team_name==away_team_required):
+        if (playerpassingdircor == 'Rut Hedvig Lindahl' and tswepassplayerdircor['minute']==11):
+            playernowpassing=playerpassingdircor
+
+            SwePassPlayerDirCorCircle=plt.Circle((x_start,pitchWidthY-y_start),circleSize,color="yellow")
+            SwePassPlayerDirCorCircle.set_alpha(.2)
+            eu.add_patch(SwePassPlayerDirCorCircle)
+
+            #David's code
+            dx=x_end-x_start
+            dy=y_end-y_start
+            passLineDirectionCor=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
+            ft.add_patch(passLineDirectionCor)
+            ft.annotate('FoT Code from Youtube', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, y_end-25))
+
+            dx=x_end-x_start
+            dy=(pitchWidthY-y_end)-(pitchWidthY-y_start)
+            passLineDirectionCor=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
+            ft.add_patch(passLineDirection)
+            ft.annotate('Update based on match video footage', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, pitchWidthY-y_end))
+
+            #My version
+            #x_values=[x_start, x_end]
+            #y_values=[pitchWidthY-y_start, pitchWidthY-y_end]
+            #passLineDirection=plt.plot(x_values, y_values)
+            #eu.annotate('', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, pitchWidthY-y_end),
+            #    arrowprops={'arrowstyle': '<-'}, va='center')
+
+
+plt.text(5,75,away_team_required + ' ' + playernowpassing + ' originating passes')
+
+SwePassPlayerDirCor.set_size_inches(10, 7)
+SwePassPlayerDirCor.savefig('Output/SWEpassesdirectionRHL.pdf', dpi=100)
+plt.show()
