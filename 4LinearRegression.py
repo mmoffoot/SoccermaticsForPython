@@ -11,8 +11,8 @@ import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
 #Some made up data
-minutes_played=np.array([120,452,185,708,340,561])
-goals_scored=np.array([1,6,3,7,3,5])
+minutes_played=np.array([120,452,185,708,340,561,333])
+goals_scored=np.array([1,6,3,7,3,5,4])
 
 #Set up dataframe
 minutes_model = pd.DataFrame()
@@ -36,11 +36,11 @@ a=0
 
 #Slope determined by linear regression
 model_fit=smf.ols(formula='goals_scored ~ minutes_played -1 ', data=minutes_model).fit()
-print(model_fit.summary())        
+print(model_fit.summary())
 [b]=model_fit.params
 
 x=np.arange(800,step=0.1)
-y= a + b*x 
+y= a + b*x
 
 ax.plot(minutes_played, goals_scored, linestyle='none', marker= '.', markerSize= 12, color='black')
 ax.plot(x, y, color='black')
@@ -51,5 +51,4 @@ for i,mp in enumerate(minutes_played):
 
 
 plt.show()
-fig.savefig('Output/LinearRelationship' + str(round(1/b)) + '.pdf', dpi=None, bbox_inches="tight")   
-
+fig.savefig('Output/LinearRelationship' + str(round(1/b)) + '.pdf', dpi=None, bbox_inches="tight")

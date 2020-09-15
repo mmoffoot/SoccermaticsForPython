@@ -12,22 +12,28 @@ import json
 
 #Plotting
 import matplotlib.pyplot as plt
-import FCPython 
+import FCPython
+import xGModel
 
 #Statistical fitting of models
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
+# Expit (a.k.a. logistic sigmoid) ufunc for ndarrays.
+from scipy.special import expit
 
+shots_model,goals_only = xGModel.xGModel()
 #Plot a logistic curve
 b=[3, -3]
 x=np.arange(5,step=0.1)
-y=1/(1+np.exp(-b[0]-b[1]*x))
+#y=1/(1+np.exp(-b[0]-b[1]*x))
+#Alternative using Expit
+y=expit(-b[0]-b[1]*x)
 fig,ax=plt.subplots(num=1)
 plt.ylim((-0.05,1.05))
 plt.xlim((0,5))
 ax.set_ylabel('y')
-ax.set_xlabel("x") 
+ax.set_xlabel("x")
 ax.plot(x, y, linestyle='solid', color='black')
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
@@ -66,7 +72,7 @@ ax.spines['right'].set_visible(False)
 #Intercept and Slope
 #b=[-0.05, 1/125]
 #x=np.arange(150,step=0.1)
-#y= b[0] + b[1]*x 
+#y= b[0] + b[1]*x
 #ax.plot(x, y, linestyle='solid', color='black')
 
 #Now try sigmoid model
@@ -74,12 +80,12 @@ ax.spines['right'].set_visible(False)
 #because each point contains lots of data points
 b=[3, -3]
 x=np.arange(150,step=0.1)
-y=1/(1+np.exp(b[0]+b[1]*x*np.pi/180)) 
+y=1/(1+np.exp(b[0]+b[1]*x*np.pi/180))
 ax.plot(x, y, linestyle='solid', color='black')
 plt.show()
 
 #Now lets look at the likelihood of model given data
-xG=1/(1+np.exp(b[0]+b[1]*shots_model['Angle'])) 
+xG=1/(1+np.exp(b[0]+b[1]*shots_model['Angle']))
 shots_model = shots_model.assign(xG=xG)
 shots_40=shots_model.iloc[:40]
 fig,ax=plt.subplots(num=1)
@@ -95,30 +101,30 @@ for item,shot in shots_40.iterrows():
     else:
         loglikelihood=loglikelihood+np.log(1 - shot['xG'])
         ax.plot([ang,ang],[shot['Goal'],1-shot['xG']], color='blue')
-    
+
 ax.set_ylabel('Goal scored')
 ax.set_xlabel("Shot angle (degrees)")
 plt.ylim((-0.05,1.05))
 plt.xlim((0,80))
-plt.text(45,0.2,'Log-likelihood:') 
+plt.text(45,0.2,'Log-likelihood:')
 plt.text(45,0.1,str(loglikelihood))
 ax.set_yticks([0,1])
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
-fig.savefig('Output/LikelihoodExample.pdf', dpi=None, bbox_inches="tight")   
+fig.savefig('Output/LikelihoodExample.pdf', dpi=None, bbox_inches="tight")
 plt.show()
 
 
 #Make single variable model of angle
 #Using logistic regression we find the optimal values of b
 #This process minimizes the loglikelihood
-test_model = smf.glm(formula="Goal ~ Angle" , data=shots_model, 
+test_model = smf.glm(formula="Goal ~ Angle" , data=shots_model,
                            family=sm.families.Binomial()).fit()
-print(test_model.summary())        
+print(test_model.summary())
 b=test_model.params
 
 
-xGprob=1/(1+np.exp(b[0]+b[1]*midangle*np.pi/180)) 
+xGprob=1/(1+np.exp(b[0]+b[1]*midangle*np.pi/180))
 fig,ax=plt.subplots(num=1)
 ax.plot(midangle, prob_goal, linestyle='none', marker= '.', markerSize= 12, color='black')
 ax.plot(midangle, xGprob, linestyle='solid', color='black')
@@ -127,7 +133,7 @@ ax.set_xlabel("Shot angle (degrees)")
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 plt.show()
-fig.savefig('Output/ProbabilityOfScoringAngleFit.pdf', dpi=None, bbox_inches="tight")   
+fig.savefig('Output/ProbabilityOfScoringAngleFit.pdf', dpi=None, bbox_inches="tight")
 
 
 
@@ -151,14 +157,14 @@ ax.spines['right'].set_visible(False)
 
 
 #Make single variable model of distance
-test_model = smf.glm(formula="Goal ~ Distance" , data=shots_model, 
+test_model = smf.glm(formula="Goal ~ Distance" , data=shots_model,
                            family=sm.families.Binomial()).fit()
-print(test_model.summary())        
+print(test_model.summary())
 b=test_model.params
-xGprob=1/(1+np.exp(b[0]+b[1]*middistance)) 
+xGprob=1/(1+np.exp(b[0]+b[1]*middistance))
 ax.plot(middistance, xGprob, linestyle='solid', color='black')
 plt.show()
-fig.savefig('Output/ProbabilityOfScoringDistance.pdf', dpi=None, bbox_inches="tight")   
+fig.savefig('Output/ProbabilityOfScoringDistance.pdf', dpi=None, bbox_inches="tight")
 
 
 
@@ -166,11 +172,11 @@ fig.savefig('Output/ProbabilityOfScoringDistance.pdf', dpi=None, bbox_inches="ti
 #Adding distance squared
 squaredD = shots_model['Distance']**2
 shots_model = shots_model.assign(D2=squaredD)
-test_model = smf.glm(formula="Goal ~ Distance + D2" , data=shots_model, 
+test_model = smf.glm(formula="Goal ~ Distance + D2" , data=shots_model,
                            family=sm.families.Binomial()).fit()
-print(test_model.summary())        
+print(test_model.summary())
 b=test_model.params
-xGprob=1/(1+np.exp(b[0]+b[1]*middistance+b[2]*pow(middistance,2))) 
+xGprob=1/(1+np.exp(b[0]+b[1]*middistance+b[2]*pow(middistance,2)))
 fig,ax=plt.subplots(num=1)
 ax.plot(middistance, prob_goal, linestyle='none', marker= '.', color='black')
 ax.set_ylabel('Probability chance scored')
@@ -179,7 +185,7 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.plot(middistance, xGprob, linestyle='solid', color='black')
 plt.show()
-fig.savefig('Output/ProbabilityOfScoringDistanceSquared.pdf', dpi=None, bbox_inches="tight")   
+fig.savefig('Output/ProbabilityOfScoringDistanceSquared.pdf', dpi=None, bbox_inches="tight")
 
 
 #Adding even more variables to the model.
@@ -193,7 +199,7 @@ shots_model = shots_model.assign(AX=AX)
 
 # A general model for fitting goal probability
 # List the model variables you want here
-model_variables = ['Angle','Distance','X','C']
+model_variables = ['Angle','Distance']
 model=''
 for v in model_variables[:-1]:
     model = model  + v + ' + '
@@ -201,22 +207,23 @@ model = model + model_variables[-1]
 
 
 #Fit the model
-test_model = smf.glm(formula="Goal ~ " + model, data=shots_model, 
+test_model = smf.glm(formula="Goal ~ " + model, data=shots_model,
                            family=sm.families.Binomial()).fit()
-print(test_model.summary())        
+print(test_model.summary())
 b=test_model.params
 
 
 #Return xG value for more general model
-def calculate_xG(sh):    
+def calculate_xG(sh):
    bsum=b[0]
    for i,v in enumerate(model_variables):
        bsum=bsum+b[i+1]*sh[v]
-   xG = 1/(1+np.exp(bsum)) 
-   return xG   
+   #xG = 1/(1+np.exp(bsum))
+   xG = expit(bsum)
+   return xG
 
 #Add an xG to my dataframe
-xG=shots_model.apply(calculate_xG, axis=1) 
+xG=shots_model.apply(calculate_xG, axis=1)
 shots_model = shots_model.assign(xG=xG)
 
 
@@ -236,7 +243,7 @@ for x in range(65):
         sh['X2'] = x**2
         sh['C'] = abs(y-65/2)
         sh['C2'] = (y-65/2)**2
-        
+
         pgoal_2d[x,y] =  calculate_xG(sh)
 
 (fig,ax) = FCPython.createGoalMouth()
@@ -247,6 +254,4 @@ plt.xlim((0,66))
 plt.ylim((-3,35))
 plt.gca().set_aspect('equal', adjustable='box')
 plt.show()
-fig.savefig('Output/goalprobfor_' + model  + '.pdf', dpi=None, bbox_inches="tight")   
-
-
+fig.savefig('Output/goalprobfor_' + model  + '.pdf', dpi=None, bbox_inches="tight")
