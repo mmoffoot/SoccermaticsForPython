@@ -4,7 +4,7 @@ import json
 
 #Load the competition file
 #Got this by searching 'how do I open json in Python'
-with open('../statsbomb-opendata/data/competitions.json') as f:
+with open('Statsbomb/data/competitions.json') as f:
     competitions = json.load(f)
 
 #Self select manually a competition ID from the data, such as 72 or 43
@@ -18,7 +18,7 @@ for competition in competitions:
         season_id=competition['season_id']
 
 #Load the list of matches for this competition
-with open('../statsbomb-opendata/data/matches/'+str(competition_id)+'/'+str(season_id)+'.json') as f:
+with open('Statsbomb/data/matches/'+str(competition_id)+'/'+str(season_id)+'.json') as f:
     matches = json.load(f)
 
 #Look inside matches
