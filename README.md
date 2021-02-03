@@ -5,9 +5,10 @@ The code follows the video lectures from the Youtube channel 'Friends of Trackin
 https://www.youtube.com/channel/UCUBFJYcag8j2rm_9HkrrA7w
 
 You should put the freely availbale data in the directories: 
-Statsbomb (sourced from the Github repo https://github.com/statsbomb/open-data)
-Wyscout
-Signality (coming soon)
+
+- Statsbomb (sourced from the Github repo https://github.com/statsbomb/open-data)
+- Wyscout
+- Signality (coming soon)
 
 Lecture List:
 
