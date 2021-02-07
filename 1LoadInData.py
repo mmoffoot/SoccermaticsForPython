@@ -21,11 +21,11 @@ for competition in competitions:
 with open('Statsbomb/data/matches/'+str(competition_id)+'/'+str(season_id)+'.json') as f:
     matches = json.load(f)
 
-#Look inside matches
-matches[0]
-matches[0]['home_team']
-matches[0]['home_team']['home_team_name']
-matches[0]['away_team']['away_team_name']
+#Look inside matches (Only run these if in an IDE like Anaconda)
+#matches[0]
+#matches[0]['home_team']
+#matches[0]['home_team']['home_team_name']
+#matches[0]['away_team']['away_team_name']
 
 #Print all match results
 for match in matches:
