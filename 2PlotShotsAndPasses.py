@@ -4,6 +4,7 @@
 #Function to draw the pitch
 import matplotlib.pyplot as plt
 import numpy as np
+from copy import copy
 
 #Size of the pitch in yards (!!!)
 pitchLengthX=120
@@ -20,7 +21,7 @@ file_name=str(match_id_required)+'.json'
 
 #Load in all match events
 import json
-with open('../statsbomb-opendata/data/events/'+file_name) as data_file:
+with open('Statsbomb/data/events/'+file_name) as data_file:
     #print (mypath+'events/'+file)
     data = json.load(data_file)
 
@@ -69,6 +70,7 @@ plt.text(80,75,home_team_required + ' shots')
 
 fig.set_size_inches(10, 7)
 fig.savefig('Output/shots.pdf', dpi=100)
+fig.savefig('Output/shots.png', dpi=300)
 plt.show()
 
 #Exercise:
@@ -102,6 +104,7 @@ plt.text(80,75,home_team_required + ' originating pass')
 
 anotherFig.set_size_inches(10, 7)
 anotherFig.savefig('Output/passes.pdf', dpi=100)
+anotherFig.savefig('Output/passes.png', dpi=300)
 plt.show()
 
 
@@ -130,6 +133,7 @@ plt.text(5,75,away_team_required + ' originating passes')
 
 SwePasses.set_size_inches(10, 7)
 SwePasses.savefig('Output/SWEpasses.pdf', dpi=100)
+SwePasses.savefig('Output/SWEpasses.png', dpi=300)
 plt.show()
 
 
@@ -158,6 +162,7 @@ plt.text(5,75,away_team_required + ' ' + playerpassing + ' originating passes')
 
 SwePassPlayer.set_size_inches(10, 7)
 SwePassPlayer.savefig('Output/SWEpassesSCS.pdf', dpi=100)
+SwePassPlayer.savefig('Output/SWEpassesSCS.png', dpi=300)
 plt.show()
 
 
@@ -209,6 +214,7 @@ plt.text(5,75,away_team_required + ' ' + playernowpassing + ' originating passes
 
 SwePassPlayerDir.set_size_inches(10, 7)
 SwePassPlayerDir.savefig('Output/SWEpassesdirectionSCS.pdf', dpi=100)
+SwePassPlayerDir.savefig('Output/SWEpassesdirectionSCS.png', dpi=300)
 plt.show()
 
 
@@ -252,8 +258,8 @@ for i,tswepassplayerdircor in passes.iterrows():
 
             dx=x_end-x_start
             dy=(pitchWidthY-y_end)-(pitchWidthY-y_start)
-            passLineDirectionCor=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
-            ft.add_patch(passLineDirection)
+            anotherPassLineDirectionCor=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
+            ft.add_patch(anotherPassLineDirectionCor)
             ft.annotate('Update based on match video footage', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, pitchWidthY-y_end))
 
             #My version
@@ -268,4 +274,5 @@ plt.text(5,75,away_team_required + ' ' + playernowpassing + ' originating passes
 
 SwePassPlayerDirCor.set_size_inches(10, 7)
 SwePassPlayerDirCor.savefig('Output/SWEpassesdirectionRHL.pdf', dpi=100)
+SwePassPlayerDirCor.savefig('Output/SWEpassesdirectionRHL.png', dpi=300)
 plt.show()
