@@ -35,7 +35,11 @@ shots = df.loc[df['type_name'] == 'Shot'].set_index('id')
 
 #Draw the pitch
 from FCPython import createPitch
-(fig,ax) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+(fig,ax) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
+
+# Have this thing about pitches being green.
+fig.set_facecolor('green')
+ax.patch.set_facecolor('green')
 
 #Plot the shots
 for i,shot in shots.iterrows():
@@ -50,23 +54,24 @@ for i,shot in shots.iterrows():
 
     if (team_name==home_team_required):
         if goal:
-            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="red")
+            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
             plt.text((x+1),pitchWidthY-y+1,shot['player_name'])
         else:
-            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="red")
+            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
             shotCircle.set_alpha(.2)
     elif (team_name==away_team_required):
         if goal:
-            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="blue")
+            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="yellow")
             plt.text((pitchLengthX-x+1),y+1,shot['player_name'])
         else:
-            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="blue")
+            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="yellow")
             shotCircle.set_alpha(.2)
     ax.add_patch(shotCircle)
 
 
-plt.text(5,75,away_team_required + ' shots')
-plt.text(80,75,home_team_required + ' shots')
+plt.text(5,83,away_team_required + ' shots')
+plt.text(80,83,home_team_required + ' shots')
+plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 fig.set_size_inches(10, 7)
 fig.savefig('Output/shots.pdf', dpi=100)
@@ -80,7 +85,10 @@ plt.show()
 passes = df.loc[df['type_name'] == 'Pass'].set_index('id')
 
 # Plot the starting point of the pass
-(anotherFig,by) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+(anotherFig,by) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
+
+anotherFig.set_facecolor('green')
+by.patch.set_facecolor('green')
 
 for i,tpass in passes.iterrows():
     x=tpass['location'][0]
@@ -91,16 +99,17 @@ for i,tpass in passes.iterrows():
     circleSize=1
 
     if (team_name==home_team_required):
-            passCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="blue")
-            passCircle.set_alpha(.2)
+            passCircle=plt.Circle((pitchLengthX-x,pitchWidthY-y),circleSize,color="white")
+            passCircle.set_alpha(.7)
     elif (team_name==away_team_required):
-            passCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="yellow")
-            passCircle.set_alpha(.2)
+            passCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
+            passCircle.set_alpha(.7)
     by.add_patch(passCircle)
 
 
-plt.text(5,75,away_team_required + ' originating pass')
-plt.text(80,75,home_team_required + ' originating pass')
+plt.text(5,83,away_team_required + ' originating pass')
+plt.text(80,83,home_team_required + ' originating pass')
+plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 anotherFig.set_size_inches(10, 7)
 anotherFig.savefig('Output/passes.pdf', dpi=100)
@@ -109,9 +118,10 @@ plt.show()
 
 
 #2, Plot the start point of every Sweden pass. Attacking left to right.
-(SwePasses,cz) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+(SwePasses,cz) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
 
-SwepassCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+SwePasses.set_facecolor('green')
+cz.patch.set_facecolor('green')
 
 for i,tswepass in passes.iterrows():
     x=tswepass['location'][0]
@@ -123,13 +133,14 @@ for i,tswepass in passes.iterrows():
 
     if (team_name==away_team_required):
             SwepassCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
-            SwepassCircle.set_alpha(.2)
+            SwepassCircle.set_alpha(.7)
             #if (tswepass['player_name'] == 'Rut Hedvig Lindahl'):
             #    plt.text((x+1),pitchWidthY-y+1,tswepass['player_name'])
-    cz.add_patch(SwepassCircle)
+            cz.add_patch(SwepassCircle)
 
 
-plt.text(5,75,away_team_required + ' originating passes')
+plt.text(5,83,away_team_required + ' originating passes')
+plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 SwePasses.set_size_inches(10, 7)
 SwePasses.savefig('Output/SWEpasses.pdf', dpi=100)
@@ -138,9 +149,10 @@ plt.show()
 
 
 #3, Plot only passes made by Caroline Seger (she is Sara Caroline Seger in the database)
-(SwePassPlayer,dw) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+(SwePassPlayer,dw) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
 
-SwePassPlayerCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+SwePassPlayer.set_facecolor('green')
+dw.patch.set_facecolor('green')
 
 for i,tswepassplayer in passes.iterrows():
     x=tswepassplayer['location'][0]
@@ -154,11 +166,12 @@ for i,tswepassplayer in passes.iterrows():
         if (tswepassplayer['player_name'] == 'Sara Caroline Seger'):
             playerpassing = tswepassplayer['player_name']
             SwePassPlayerCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
-            SwePassPlayerCircle.set_alpha(.2)
-    dw.add_patch(SwePassPlayerCircle)
+            SwePassPlayerCircle.set_alpha(.7)
+            dw.add_patch(SwePassPlayerCircle)
 
 
-plt.text(5,75,away_team_required + ' ' + playerpassing + ' originating passes')
+plt.text(5,83,away_team_required + ' ' + playerpassing + ' originating passes')
+plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 SwePassPlayer.set_size_inches(10, 7)
 SwePassPlayer.savefig('Output/SWEpassesSCS.pdf', dpi=100)
@@ -168,9 +181,10 @@ plt.show()
 
 
 #4, Plot arrows to show where the passes went
-(SwePassPlayerDir,eu) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+(SwePassPlayerDir,eu) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
 
-SwePassPlayerDirCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+SwePassPlayerDir.set_facecolor('green')
+eu.patch.set_facecolor('green')
 
 for i,tswepassplayerdir in passes.iterrows():
     #Just checking the Keys of the list
@@ -193,7 +207,7 @@ for i,tswepassplayerdir in passes.iterrows():
             playernowpassing=playerpassingdir
 
             SwePassPlayerDirCircle=plt.Circle((x_start,pitchWidthY-y_start),circleSize,color="yellow")
-            SwePassPlayerDirCircle.set_alpha(.2)
+            SwePassPlayerDirCircle.set_alpha(.7)
             eu.add_patch(SwePassPlayerDirCircle)
 
             #David's code
@@ -210,7 +224,8 @@ for i,tswepassplayerdir in passes.iterrows():
             #    arrowprops={'arrowstyle': '<-'}, va='center')
 
 
-plt.text(5,75,away_team_required + ' ' + playernowpassing + ' originating passes')
+plt.text(5,83,away_team_required + ' ' + playernowpassing + ' originating passes')
+plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 SwePassPlayerDir.set_size_inches(10, 7)
 SwePassPlayerDir.savefig('Output/SWEpassesdirectionSCS.pdf', dpi=100)
@@ -221,9 +236,10 @@ plt.show()
 #5, Plot arrows of a player in a specific minute to show where the passes went
 # and correlate to Youtube footage of the match
 
-(SwePassPlayerDirCor,ft) = createPitch(pitchLengthX,pitchWidthY,'yards','gray')
+(SwePassPlayerDirCor,ft) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
 
-SwePassPlayerDirCorCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+SwePassPlayerDirCor.set_facecolor('green')
+ft.patch.set_facecolor('green')
 
 for i,tswepassplayerdircor in passes.iterrows():
     #Just checking the Keys of the list
@@ -246,7 +262,7 @@ for i,tswepassplayerdircor in passes.iterrows():
             playernowpassing=playerpassingdircor
 
             SwePassPlayerDirCorCircle=plt.Circle((x_start,pitchWidthY-y_start),circleSize,color="yellow")
-            SwePassPlayerDirCorCircle.set_alpha(.2)
+            SwePassPlayerDirCorCircle.set_alpha(.7)
             eu.add_patch(SwePassPlayerDirCorCircle)
 
             #David's code
@@ -270,7 +286,8 @@ for i,tswepassplayerdircor in passes.iterrows():
             #    arrowprops={'arrowstyle': '<-'}, va='center')
 
 
-plt.text(5,75,away_team_required + ' ' + playernowpassing + ' originating passes')
+plt.text(5,83,away_team_required + ' ' + playernowpassing + ' originating passes')
+plt.text(80,-3,'Created by Miguel Ponce de Leon / @miguelpdl . Data provided by StatsBomb', fontsize=6)
 
 SwePassPlayerDirCor.set_size_inches(10, 7)
 SwePassPlayerDirCor.savefig('Output/SWEpassesdirectionRHL.pdf', dpi=100)
