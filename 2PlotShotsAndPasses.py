@@ -211,17 +211,24 @@ for i,tswepassplayerdir in passes.iterrows():
             eu.add_patch(SwePassPlayerDirCircle)
 
             #David's code
-            dx=x_end-x_start
-            dy=y_end-y_start
-            passLineDirection=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
-            eu.add_patch(passLineDirection)
+            #dx=x_end-x_start
+            #dy=y_end-y_start
+            #passLineDirection=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
+            #eu.add_patch(passLineDirection)
 
-            #My version
+            #My version 1
             #x_values=[x_start, x_end]
             #y_values=[pitchWidthY-y_start, pitchWidthY-y_end]
             #passLineDirection=plt.plot(x_values, y_values)
             #eu.annotate('', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, pitchWidthY-y_end),
             #    arrowprops={'arrowstyle': '<-'}, va='center')
+
+            #My version 2
+            dx=x_end-x_start
+            dy=(pitchWidthY-y_end)-(pitchWidthY-y_start)
+            passLineDirection=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
+            eu.add_patch(passLineDirection)
+
 
 
 plt.text(5,83,away_team_required + ' ' + playernowpassing + ' originating passes')
