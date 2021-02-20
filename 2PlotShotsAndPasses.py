@@ -241,11 +241,17 @@ plt.show()
 
 #5, Plot arrows of a player in a specific minute to show where the passes went
 # and correlate to Youtube footage of the match
-# I always pick the goalkeeper to for this test.
+# I always pick the goalkeeper for this test.
 
-teamRequired = home_team_required
-playerRequired = 'Carly Mitchell Telford'
-minuteRequired = 3
+## Check for SWE
+teamRequired = away_team_required
+playerRequired = 'Rut Hedvig Lindahl'
+minuteRequired = 11
+
+## Check for ENG
+#teamRequired = home_team_required
+#playerRequired = 'Carly Mitchell Telford'
+#minuteRequired = 91
 
 # The team being monitored will be plotted left to right.
 teamBeingMonitored = away_team_required
