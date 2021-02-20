@@ -54,23 +54,24 @@ for i,shot in shots.iterrows():
 
     if (team_name==home_team_required):
         if goal:
-            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
-            plt.text((x+1),pitchWidthY-y+1,shot['player_name'])
+            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="white")
+            plt.text((pitchLengthX-x+1),y+1,shot['player_name'])
         else:
-            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="white")
+            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="white")
             shotCircle.set_alpha(.2)
     elif (team_name==away_team_required):
         if goal:
-            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="yellow")
-            plt.text((pitchLengthX-x+1),y+1,shot['player_name'])
+            x,pitchWidthY-y
+            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
+            plt.text((x+1),pitchWidthY-y+1,shot['player_name'])
         else:
-            shotCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="yellow")
+            shotCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
             shotCircle.set_alpha(.2)
     ax.add_patch(shotCircle)
 
 
-plt.text(5,83,away_team_required + ' shots')
-plt.text(80,83,home_team_required + ' shots')
+plt.text(5,83,home_team_required + ' shots')
+plt.text(80,83,away_team_required + ' shots')
 plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 fig.set_size_inches(10, 7)
@@ -99,7 +100,7 @@ for i,tpass in passes.iterrows():
     circleSize=1
 
     if (team_name==home_team_required):
-            passCircle=plt.Circle((pitchLengthX-x,pitchWidthY-y),circleSize,color="white")
+            passCircle=plt.Circle((pitchLengthX-x,y),circleSize,color="white")
             passCircle.set_alpha(.7)
     elif (team_name==away_team_required):
             passCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
@@ -107,8 +108,8 @@ for i,tpass in passes.iterrows():
     by.add_patch(passCircle)
 
 
-plt.text(5,83,away_team_required + ' originating pass')
-plt.text(80,83,home_team_required + ' originating pass')
+plt.text(5,83,away_team_required + ' originating pass  ->')
+plt.text(80,83,'<-  ' + home_team_required + ' originating pass')
 plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 anotherFig.set_size_inches(10, 7)
@@ -134,12 +135,10 @@ for i,tswepass in passes.iterrows():
     if (team_name==away_team_required):
             SwepassCircle=plt.Circle((x,pitchWidthY-y),circleSize,color="yellow")
             SwepassCircle.set_alpha(.7)
-            #if (tswepass['player_name'] == 'Rut Hedvig Lindahl'):
-            #    plt.text((x+1),pitchWidthY-y+1,tswepass['player_name'])
             cz.add_patch(SwepassCircle)
 
 
-plt.text(5,83,away_team_required + ' originating passes')
+plt.text(5,83,away_team_required + ' originating passes  ->')
 plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 SwePasses.set_size_inches(10, 7)
@@ -170,7 +169,7 @@ for i,tswepassplayer in passes.iterrows():
             dw.add_patch(SwePassPlayerCircle)
 
 
-plt.text(5,83,away_team_required + ' ' + playerpassing + ' originating passes')
+plt.text(5,83,away_team_required + ' ' + playerpassing + ' originating passes  ->')
 plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 SwePassPlayer.set_size_inches(10, 7)
@@ -231,7 +230,7 @@ for i,tswepassplayerdir in passes.iterrows():
 
 
 
-plt.text(5,83,away_team_required + ' ' + playernowpassing + ' originating passes')
+plt.text(5,83,away_team_required + ' ' + playernowpassing + ' originating passes  ->')
 plt.text(80,-3,'Data provided by StatsBomb', fontsize=6)
 
 SwePassPlayerDir.set_size_inches(10, 7)
@@ -242,61 +241,128 @@ plt.show()
 
 #5, Plot arrows of a player in a specific minute to show where the passes went
 # and correlate to Youtube footage of the match
+# I always pick the goalkeeper to for this test.
 
-(SwePassPlayerDirCor,ft) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
+teamRequired = home_team_required
+playerRequired = 'Carly Mitchell Telford'
+minuteRequired = 3
 
-SwePassPlayerDirCor.set_facecolor('green')
+# The team being monitored will be plotted left to right.
+teamBeingMonitored = away_team_required
+
+(passPlayerDirCor,ft) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
+
+passPlayerDirCor.set_facecolor('green')
 ft.patch.set_facecolor('green')
 
-for i,tswepassplayerdircor in passes.iterrows():
-    #Just checking the Keys of the list
-    #print (', '.join(map(str, tswepassplayerdir.items())))
+for i,tpassplayerdircor in passes.iterrows():
 
     #Originally had the pass locations stored here.
-    x_start=tswepassplayerdircor['location'][0]
-    y_start=tswepassplayerdircor['location'][1]
-    x_end=tswepassplayerdircor['pass_end_location'][0]
-    y_end=tswepassplayerdircor['pass_end_location'][1]
+    x_start=tpassplayerdircor['location'][0]
+    y_start=tpassplayerdircor['location'][1]
+    x_end=tpassplayerdircor['pass_end_location'][0]
+    y_end=tpassplayerdircor['pass_end_location'][1]
 
-    team_name=tswepassplayerdircor['team_name']
+    team_name=tpassplayerdircor['team_name']
 
     circleSize=1
 
-    playerpassingdircor = tswepassplayerdircor['player_name']
+    playerpassingdircor = tpassplayerdircor['player_name']
 
-    if (team_name==away_team_required):
-        if (playerpassingdircor == 'Rut Hedvig Lindahl' and tswepassplayerdircor['minute']==11):
+    if (team_name==teamRequired):
+        if (playerpassingdircor == playerRequired and tpassplayerdircor['minute']==minuteRequired and teamBeingMonitored==team_name):
             playernowpassing=playerpassingdircor
 
-            SwePassPlayerDirCorCircle=plt.Circle((x_start,pitchWidthY-y_start),circleSize,color="yellow")
-            SwePassPlayerDirCorCircle.set_alpha(.7)
-            eu.add_patch(SwePassPlayerDirCorCircle)
+            passPlayerDirCorCircle=plt.Circle((x_start,pitchWidthY-y_start),circleSize,color="yellow")
+            passPlayerDirCorCircle.set_alpha(.7)
+            ft.add_patch(passPlayerDirCorCircle)
 
-            #David's code
-            dx=x_end-x_start
-            dy=y_end-y_start
-            passLineDirectionCor=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
-            ft.add_patch(passLineDirectionCor)
-            ft.annotate('FoT Code from Youtube', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, y_end-25))
+            #David's code for Sweden
+            #dx=x_end-x_start
+            #dy=y_end-y_start
+            #passLineDirectionCor=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
+            #ft.add_patch(passLineDirectionCor)
+            #ft.annotate('FoT Code from Youtube', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, y_end-25))
 
+            #My code for Sweden.
             dx=x_end-x_start
             dy=(pitchWidthY-y_end)-(pitchWidthY-y_start)
             anotherPassLineDirectionCor=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
             ft.add_patch(anotherPassLineDirectionCor)
-            ft.annotate('Update based on match video footage', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, pitchWidthY-y_end))
+            ft.annotate('Based on match video footage', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, pitchWidthY-y_end))
 
-            #My version
-            #x_values=[x_start, x_end]
-            #y_values=[pitchWidthY-y_start, pitchWidthY-y_end]
-            #passLineDirection=plt.plot(x_values, y_values)
-            #eu.annotate('', xy=(x_start,pitchWidthY-y_start), xytext=(x_end, pitchWidthY-y_end),
-            #    arrowprops={'arrowstyle': '<-'}, va='center')
+        elif (playerpassingdircor == playerRequired and tpassplayerdircor['minute']==minuteRequired):
+            playernowpassing=playerpassingdircor
+
+            passPlayerDirCorCircle=plt.Circle((pitchLengthX-x_start,y_start),circleSize,color="white")
+            passPlayerDirCorCircle.set_alpha(.7)
+            ft.add_patch(passPlayerDirCorCircle)
+
+            #My code for England.
+            dx=(pitchLengthX-x_end)-(pitchLengthX-x_start)
+            dy=y_end-y_start
+            anotherPassLineDirectionCor=plt.Arrow(pitchLengthX-x_start,y_start,dx,dy,width=1.5,color="white")
+
+            ft.add_patch(anotherPassLineDirectionCor)
+            ft.annotate('Based on match video footage', xy=(pitchLengthX-x_start,y_start), xytext=(pitchLengthX-x_end, y_end))
 
 
-plt.text(5,83,away_team_required + ' ' + playernowpassing + ' originating passes')
-plt.text(80,-3,'Created by Miguel Ponce de Leon / @miguelpdl . Data provided by StatsBomb', fontsize=6)
+plt.text(5,83,teamRequired + ' ' + playernowpassing + ' originating pass')
+plt.text(80,-4,'Created by Miguel Ponce de Leon / @miguelpdl . \n Data provided by StatsBomb', fontsize=6)
 
-SwePassPlayerDirCor.set_size_inches(10, 7)
-SwePassPlayerDirCor.savefig('Output/SWEpassesdirectionRHL.pdf', dpi=100)
-SwePassPlayerDirCor.savefig('Output/SWEpassesdirectionRHL.png', dpi=300)
+passPlayerDirCor.set_size_inches(10, 7)
+passPlayerDirCor.savefig('Output/' + playernowpassing + 'passdirection.pdf', dpi=100)
+passPlayerDirCor.savefig('Output/' + playernowpassing + 'passdirection.png', dpi=300)
+plt.show()
+
+#6. Plot the corners
+
+(cornerDir,gs) = createPitch(pitchLengthX,pitchWidthY,'yards','white')
+
+cornerDir.set_facecolor('green')
+gs.patch.set_facecolor('green')
+
+for i,thePassesdir in passes.iterrows():
+    # Check to see if this was a corner, if so plot it.
+
+    #playPattern = thePassesdir['play_pattern_name']
+    passType = thePassesdir['pass_type_name']
+
+    if (passType == "Corner"):
+
+        #Pass location storage.
+        x_start=thePassesdir['location'][0]
+        y_start=thePassesdir['location'][1]
+        x_end=thePassesdir['pass_end_location'][0]
+        y_end=thePassesdir['pass_end_location'][1]
+
+        team_name=thePassesdir['team_name']
+
+        circleSize=1
+
+        if (team_name==home_team_required):
+                passCorner=plt.Circle((pitchLengthX-x_start,y_start),circleSize,color="white")
+                passCorner.set_alpha(.7)
+                dx=(pitchLengthX-x_end)-(pitchLengthX-x_start)
+                dy=y_end-y_start
+                passCornerDirection=plt.Arrow(pitchLengthX-x_start,y_start,dx,dy,width=1.5,color="white")
+                gs.add_patch(passCorner)
+                gs.add_patch(passCornerDirection)
+
+        elif (team_name==away_team_required):
+                passCorner=plt.Circle((x_start,pitchWidthY-y_start),circleSize,color="yellow")
+                passCorner.set_alpha(.7)
+                dx=x_end-x_start
+                dy=(pitchWidthY-y_end)-(pitchWidthY-y_start)
+                passCornerDirection=plt.Arrow(x_start,pitchWidthY-y_start,dx,dy,width=1.5,color="yellow")
+                gs.add_patch(passCorner)
+                gs.add_patch(passCornerDirection)
+
+plt.text(5,83,home_team_required + ' corners')
+plt.text(80,83,away_team_required + ' corners')
+plt.text(80,-4,'Created by Miguel Ponce de Leon / @miguelpdl . \n Data provided by StatsBomb', fontsize=6)
+
+cornerDir.set_size_inches(10, 7)
+cornerDir.savefig('Output/corners.pdf', dpi=100)
+cornerDir.savefig('Output/corners.png', dpi=300)
 plt.show()
