@@ -3,7 +3,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 from FCPython import createPitch
 import json
 
